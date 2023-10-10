@@ -3,11 +3,14 @@ from celery import shared_task
 from decouple import config
 import requests
 
-shared_task
+@shared_task
 def findUniqueResourceDetails():
     # Get the URL and Authorization token from the configuration file
     url = config('findUniqueResourceDetailsURL')
     auth_token = config('AUTH_TOKEN')  # Replace with your actual auth token
+
+    print(url)
+    print(auth_token)
 
     # Create headers with Authorization
     headers = {
@@ -22,7 +25,7 @@ def findUniqueResourceDetails():
         if response.status_code == 200:
             # Successful request, you can process the response data here
             data = response.json()
-            return data
+            print(data)
         else:
             # Handle non-200 response codes here
             print(f"Request failed with status code {response.status_code}")
@@ -32,9 +35,3 @@ def findUniqueResourceDetails():
         print(f"An error occurred: {str(e)}")
         return None
 
-# Call the function to make the request
-result = findUniqueResourceDetails()
-if result:
-    print(result)
-else:
-    print("Request failed or encountered an error.")

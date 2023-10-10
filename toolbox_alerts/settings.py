@@ -81,11 +81,11 @@ REST_FRAMEWORK = {
 custom_schedule = schedule(run_every=20)
 
 CELERY_BEAT_SCHEDULE = {
-    # 'my-scheduled-task': {
-    #     'task': 'api.tasks.find_actvities_need_to_liquidate',
-    #     'schedule': crontab(minute=30, hour=7),
-    #     'args': (),
-    # },
+    'my-scheduled-task': {
+        'task': 'toolbox_alerts.tasks.findUniqueResourceDetails',
+        'schedule': custom_schedule,
+        'args': (),
+    },
     # 'my-other-task': {
     #     'task': 'api.tasks.find_activities_past_liquidation',
     #     'schedule':crontab(minute=40, hour=7),
