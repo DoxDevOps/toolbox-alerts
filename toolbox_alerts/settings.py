@@ -83,7 +83,7 @@ custom_schedule = schedule(run_every=20)
 CELERY_BEAT_SCHEDULE = {
     'my-scheduled-task': {
         'task': 'toolbox_alerts.tasks.findUniqueResourceDetails',
-        'schedule': custom_schedule,
+        'schedule': crontab(minute=30, hour=8),
         'args': (),
     },
     # 'my-other-task': {
