@@ -86,11 +86,6 @@ CELERY_BEAT_SCHEDULE = {
         'schedule': crontab(minute=30, hour=8),
         'args': (),
     },
-    # 'my-other-task': {
-    #     'task': 'api.tasks.find_activities_past_liquidation',
-    #     'schedule':crontab(minute=40, hour=7),
-    #     'args': (),  # Pass arguments if needed
-    # },
 }
 
 ROOT_URLCONF = "toolbox_alerts.urls"
