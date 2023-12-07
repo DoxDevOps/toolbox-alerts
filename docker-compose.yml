@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    command: ["bash", "-c", "python manage.py runserver 0.0.0.0:8009"]
+    volumes:
+      - .:/toolbox-alerts
+    ports:
+      - "8009:8009"
+    depends_on:
+      - rabbitmq
+
+  rabbitmq:
+    image: "rabbitmq:3.8-management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  # celery:
+  #   build: .
+  #   command: ["bash", "-c","celery  --broker=amqp://guest:guest@localhost:5672// "]
+  #   volumes:
+  #     - .:/toolbox-alerts
+  #   depends_on:
+  #     - rabbitmq
+
+  celery_log_level:
+    build: .
+    command: ["bash", "-c","celery -A toolbox_alerts beat --loglevel=info"]
+    volumes:
+      - .:/toolbox-alerts
+    depends_on:
+      - rabbitmq
+
+  celery_worker:
+    build: .
+    command: ["bash", "-c","celery -A toolbox_alerts worker -l info -n worker@0.0.0.0"]
+    volumes:
+      - .:/toolbox-alerts
+    depends_on:
+      - rabbitmq
+
+  flower:
+    build: ./
+    command: celery -A tasks flower
+    volumes:
+      - .:/toolbox-alerts
+    working_dir: /toolbox-alerts
+    ports:
+      - 5555:5555
+

@@ -4,3 +4,4 @@ django-cors-headers==3.14.0
 djangorestframework==3.14.0
 celery==5.3.4
 flower==2.0.1
+requests==2.25.1

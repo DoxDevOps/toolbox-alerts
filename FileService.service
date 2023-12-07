@@ -1,0 +1,13 @@
+[Unit]
+Description=gunicorn daemon for file service
+After=network.target
+
+[Service]
+User=middle-man
+Group=www-data
+WorkingDirectory=/var/www/FileService
+ExecStartPre=/bin/bash -c '/usr/bin/python3 manage.py collectstatic --noinput'
+ExecStart=/usr/bin/python3 manage.py runserver 0.0.0.0:8009
+
+[Install]
+WantedBy=multi-user.target
