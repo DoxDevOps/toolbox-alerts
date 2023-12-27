@@ -3,6 +3,7 @@ from celery import shared_task
 from decouple import config
 import requests
 import json
+from requests.exceptions import Timeout
 
 auth_token = config('AUTH_TOKEN')
 headers = {
@@ -28,10 +29,12 @@ def findResouceDetailsWithCloseToFullStorage(zone: any):
     url = config('findResouceDetailsWithCloseToFullStorageURL')
     zone_data = {"data": str(zone)}  # Assuming 'zone' is the relevant data
     try:
-        response = requests.post(url, data=zone_data, headers=headers)
+        response = requests.post(url, data=zone_data, headers=headers, timeout=600)
         if response.status_code == 200:
             response_data = response.json()
             send_email_notification.delay(response_data)
+    except Timeout:
+        print("Request timed out.")
     except Exception as e:
         print(f"An error occurred in fn2: {str(e)}")
 
@@ -47,13 +50,15 @@ def filterSiteResourceDetailListByZone(data: any):
     try:
         # Define the form data with 'data' as the key and the JSON data as the value
         form_data = data
-        response = requests.post(url, data=form_data, headers=headers)
+        response = requests.post(url, data=form_data, headers=headers, timeout=600)
         if response.status_code == 200:
             response_data = response.json()
             precursorfindResouceDetailsWithCloseToFullStorage.delay(response_data)
         else:
             print(f"Request failed with status code {response.status_code}")
             return None
+    except Timeout:
+        print("Request timed out.")
     except Exception as e:
         print(f"An error occurred fn3: {str(e)}")
         return None
@@ -62,13 +67,15 @@ def filterSiteResourceDetailListByZone(data: any):
 def findUniqueResourceDetails():
     url = config('findUniqueResourceDetailsURL')
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=600)
         if response.status_code == 200:
             data = response.json()
             filterSiteResourceDetailListByZone.delay(data)
         else:
             print(f"Request failed with status code {response.status_code}")
             return None
+    except Timeout:
+        print("Request timed out.")
     except Exception as e:
         print(f"An error occurred fn4: {str(e)}")
         return None
